@@ -3,6 +3,7 @@ import { Button, Grid, Paper, Typography, IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material'; // Import close icon
 import { useRouter } from 'next/router'; // Import router
 import { getComic } from '../../services/marvel/marvel.service'; 
+import Link from 'next/link';
 
 interface ComicDetailsProps {
   comic: {
@@ -53,20 +54,24 @@ const ComicDetails: NextPage<ComicDetailsProps> = ({ comic }) => {
           {/* Comic Title */}
           <Typography variant="h4">{comic.title}</Typography>
           {/* Comic Description */}
-          <Typography variant="body1">{comic.description}</Typography>
+          {comic.textObjects.map((textObject, index) => (
+  <Typography key={index} variant="body1">
+    {textObject.text}
+  </Typography>
+))}
           {/* Comic Price */}
           <Typography variant="h5">Precio: ${comic.price}</Typography>
           {/* Comic Old Price */}
           {comic.oldPrice !== comic.price && (
             <Typography variant="body2">Precio Anterior: ${comic.oldPrice}</Typography>
           )}
-          {/* List of characters */}
-          <Typography variant="h6">Personajes:</Typography>
+         {/* List of characters */}
+         <Typography variant="h6">Personajes:</Typography>
           {comic.characters.items.map((character, index) => (
             <Typography key={index} variant="body2">
-              <a href={character.resourceURI} target="_blank" rel="noopener noreferrer">
-                {character.name}
-              </a>
+              <Link href={`/characters/${character.resourceURI.split('/').pop()}`} passHref>
+                <a>{character.name}</a>
+              </Link>
             </Typography>
           ))}
           {/* Buy Button */}
