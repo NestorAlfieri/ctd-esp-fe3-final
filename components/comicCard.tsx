@@ -21,6 +21,10 @@ const ComicCard: React.FC<ComicCardProps> = ({ comic }) => {
     // Navega a la página de detalles del cómic
     router.push(`/comics/${comic.id}`);
 };
+const handleComprar = () => {
+    router.push(`/checkout/${comic.id}`, // Use template literal to include comic ID in the pathname
+);
+};
     return (
         <Card sx={{
             maxWidth: 345,
@@ -62,7 +66,7 @@ const ComicCard: React.FC<ComicCardProps> = ({ comic }) => {
                     <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }} onClick={handleViewDetail}>
                         Ver detalle
                     </Button>
-                    <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }}>
+                    <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }}  onClick={handleComprar}>
                         Comprar
                     </Button>
                 </Box>

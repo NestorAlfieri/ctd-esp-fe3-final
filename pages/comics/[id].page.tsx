@@ -1,5 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Button, Grid, Paper, Typography } from '@mui/material';
+import { Button, Grid, Paper, Typography, IconButton } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material'; // Import close icon
+import { useRouter } from 'next/router'; // Import router
 import { getComic } from '../../services/marvel/marvel.service'; 
 
 interface ComicDetailsProps {
@@ -12,70 +14,73 @@ interface ComicDetailsProps {
     price: number;
     oldPrice: number;
     stock: number;
+    characters: {
+      items: { name: string; resourceURI: string }[];
+    };
   };
 }
 
 const ComicDetails: NextPage<ComicDetailsProps> = ({ comic }) => {
+  const router = useRouter(); // Get router object
+
   const handleBuyClick = () => {
     // Logic for handling comic purchase
   };
 
-  return (
-    <Paper sx={{ backgroundColor: "gray", padding: "20px", display: "inline-block" }}>
+  const handleGoBack = () => {
+    router.back(); // Navigate back
+  };
 
-    <Grid container spacing={0}>
-      {/* Comic Image */}
-      <Grid item xs={12} sm={6}
-       sx={{         
-        display:"flex",
-        flexDirection:"row",
-        alignItems:"center",
-        justifyContent:"center",
-        height: "70vh", 
-        '@media (max-width: 600px)': {
-            height: "60vh",            
-        },
-    }}
-      >
-      <img
-          src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
-          alt={comic.title}
-          style={{ 
-            width: 'auto', height: '90%', maxHeight: '100%' }}
-        />
-      </Grid>
-      {/* Comic Info and Buttons */}
-      <Grid item xs={12} sm={6} container direction="column" justifyContent="center" height="60vh" 
-      sx={{'@media (max-width: 600px)': {
-        height: "auto",            
-    },}}>
-        {/* Comic Title */}
-        <Typography variant="h3">{comic.title}</Typography>
-        {/* Comic Description */}
-        <Typography variant="body1">{comic.description}</Typography>
-        {/* Comic Text Objects */}
-        {comic.textObjects.map((textObject, index) => (
-          <Typography key={index} variant="body2">{textObject.text}</Typography>
-        ))}
-        {/* Comic Price */}
-        <Typography variant="h4">${comic.price}</Typography>
-       
-      </Grid>
-       {/* Buy Button */}
-       <div
-       style={{width:"100vw",display:"flex", alignItems:"center", justifyContent:"center", marginTop: "20px" }}
-       >
-       {comic.stock > 0 ? (
-          <Button variant="contained" color="primary" onClick={handleBuyClick}>
-            Comprar
+  return (
+    <Paper sx={{ width: "70vw", backgroundColor: "gray", padding: "20px", display: "inline-block" }}>
+      <Grid container spacing={2}>
+        {/* Close Icon */}
+        <Grid item xs={12} sx={{ textAlign: 'right' }}>
+          <IconButton onClick={handleGoBack}>
+            <ArrowBack />
+          </IconButton>
+        </Grid>
+        {/* Comic Image */}
+        <Grid item xs={12} sm={6}>
+          <img
+            src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
+            alt={comic.title}
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </Grid>
+        {/* Comic Info and Buttons */}
+        <Grid item xs={12} sm={6} container direction="column" justifyContent="center">
+          {/* Comic Title */}
+          <Typography variant="h4">{comic.title}</Typography>
+          {/* Comic Description */}
+          <Typography variant="body1">{comic.description}</Typography>
+          {/* Comic Price */}
+          <Typography variant="h5">Precio: ${comic.price}</Typography>
+          {/* Comic Old Price */}
+          {comic.oldPrice !== comic.price && (
+            <Typography variant="body2">Precio Anterior: ${comic.oldPrice}</Typography>
+          )}
+          {/* List of characters */}
+          <Typography variant="h6">Personajes:</Typography>
+          {comic.characters.items.map((character, index) => (
+            <Typography key={index} variant="body2">
+              <a href={character.resourceURI} target="_blank" rel="noopener noreferrer">
+                {character.name}
+              </a>
+            </Typography>
+          ))}
+          {/* Buy Button */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBuyClick}
+            disabled={comic.stock === 0}
+            style={{ marginTop: '10px' }}
+          >
+            {comic.stock > 0 ? 'Comprar' : 'Sin stock disponible'}
           </Button>
-        ) : (
-          <Button variant="contained" color="primary" disabled>
-            Sin stock disponible
-          </Button>
-        )}
-        </div>
-    </Grid>
+        </Grid>
+      </Grid>
     </Paper>
   );
 };
