@@ -45,7 +45,7 @@
     "**/*.ts",
     "**/*.tsx",
     "types.d.ts"
-  ],
+, "types"  ],
   "exclude": [
     "node_modules"
   ]

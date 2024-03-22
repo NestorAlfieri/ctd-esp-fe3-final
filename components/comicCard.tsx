@@ -1,30 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography, Box } from '@mui/material';
-import { Comic } from 'dh-marvel/pages/index.page';
+import { ComicType } from 'types/types';
 import { useRouter } from 'next/router';
 
 interface ComicCardProps {
-    comic: Comic;
+    comic: ComicType;
 }
 
 const ComicCard: React.FC<ComicCardProps> = ({ comic }) => {
     const [maxLength, setMaxLength] = useState(45);
-    const router = useRouter(); // Inicializa el router
-    
+    const router = useRouter();
+
     useEffect(() => {
         const newMaxLength = window.innerWidth < 600 ? 20 : 45;
         setMaxLength(newMaxLength);
     }, []);
-  
-    // Función para manejar el click en el botón "Ver detalle"
-  const handleViewDetail = () => {
-    // Navega a la página de detalles del cómic
-    router.push(`/comics/${comic.id}`);
-};
-const handleComprar = () => {
-    router.push(`/checkout/${comic.id}`, // Use template literal to include comic ID in the pathname
-);
-};
+    const handleViewDetail = () => {
+        router.push(`/comics/${comic.id}`);
+    };
+    const handleComprar = () => {
+        router.push(`/checkout/${comic.id}`);
+    };
     return (
         <Card sx={{
             maxWidth: 345,
@@ -39,8 +35,8 @@ const handleComprar = () => {
         }}>
             <CardMedia
                 component="img"
-                sx={{ 
-                    height: 260, 
+                sx={{
+                    height: 260,
                     '@media (max-width: 600px)': {
                         height: 180,
                     },
@@ -66,7 +62,7 @@ const handleComprar = () => {
                     <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }} onClick={handleViewDetail}>
                         Ver detalle
                     </Button>
-                    <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }}  onClick={handleComprar}>
+                    <Button variant="contained" color="primary" size="small" sx={{ fontSize: 12 }} onClick={handleComprar}>
                         Comprar
                     </Button>
                 </Box>

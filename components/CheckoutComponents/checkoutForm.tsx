@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Box, Button, Typography, TextField, Stepper, Step, StepLabel } from '@mui/material';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+
+
 export interface Comic {
     id: number;
     title: string;
@@ -46,16 +49,23 @@ const CheckoutForm = ({ comic }: { comic: Comic }) => {
        
     };
     console.log(comic);
+    const [activeStep, setActiveStep] = useState(0);
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
     return (
+      
         <form onSubmit={handleSubmit(onSubmit)}>
              <Typography variant="h6">Checkout</Typography>
            
                 <Box mt={2}>
-                    <Typography variant="body1">Comic ID: {comic.id}</Typography>
+                    <Typography variant="body1"> {comic.title}</Typography>
+                    <Image src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`} width={140} height={210}/>
                     
                 </Box>
             
-            <Stepper activeStep={0} alternativeLabel>
+            <Stepper activeStep={activeStep} alternativeLabel>
                 <Step>
                     <StepLabel>Datos Personales</StepLabel>
                 </Step>
@@ -67,10 +77,11 @@ const CheckoutForm = ({ comic }: { comic: Comic }) => {
                 </Step>
             </Stepper>
 
-            <Box className='formStep' mt={2}>
+            <Box className={activeStep === 0 ? 'formStep' : 'hidden'}mt={2}>
                 {/* Datos Personales */}
                 <Typography variant="h6">Datos Personales</Typography>
-                <Box className='fieldsContainer' mt={2}>
+                <Box className='fieldsContainer'                
+                mt={2}>
                     <Controller                    
                         name="customer.name"
                         control={control}
@@ -102,7 +113,7 @@ const CheckoutForm = ({ comic }: { comic: Comic }) => {
                 </Box>
             </Box>
 
-            <Box className='formStep' mt={2}>
+            <Box className={activeStep === 1 ? 'formStep' : 'hidden'} mt={2}>
                 {/* Dirección de Entrega */}
                 <Typography variant="h6">Dirección de Entrega</Typography>
                 <Box className='fieldsContainer' mt={2}>
@@ -153,7 +164,7 @@ const CheckoutForm = ({ comic }: { comic: Comic }) => {
                     />
                 </Box>
             </Box>
-            <Box className='formStep' mt={2}>
+            <Box className={activeStep === 2 ? 'formStep' : 'hidden'} mt={2}>
                 {/* Datos del Pago */}
                 <Typography variant="h6">Datos del Pago</Typography>
                 <Box className='fieldsContainer' mt={2}>
@@ -205,8 +216,24 @@ const CheckoutForm = ({ comic }: { comic: Comic }) => {
                 </Box>
             </Box>
 
-            <Button type="submit" variant="contained" color="primary">Enviar</Button>
+            <Button disabled={activeStep === 0} onClick={() => setActiveStep((prevActiveStep) => prevActiveStep - 1)}>
+                Anterior
+            </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                    if (activeStep === 2) {
+                        handleSubmit(onSubmit)();
+                    } else {
+                        handleNext();
+                    }
+                }}
+            >
+                {activeStep === 2 ? 'Enviar' : 'Siguiente'}
+            </Button>
         </form>
+        
     );
 };
 export default CheckoutForm;
